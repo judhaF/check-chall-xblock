@@ -30,20 +30,37 @@ class ExternalChallengeXBlock(XBlock):
 
     @XBlock.json_handler
     def verify_external_challenge(self, data, suffix=''):
-        user_email = self.runtime.get_real_user(self.runtime.anonymous_student_id).email
-        
+        user_email = None
+
+        # Safely retrieve student email via XBlock User Service
+        user_service = self.runtime.service(self, 'user')
+        if user_service:
+            user = user_service.get_current_user()
+            user_email = getattr(user, 'email', None)
+
+        # Fallback for runtime environment
+        if not user_email and hasattr(self.runtime, 'get_real_user') and hasattr(self.runtime, 'anonymous_student_id'):
+            try:
+                real_user = self.runtime.get_real_user(self.runtime.anonymous_student_id)
+                user_email = getattr(real_user, 'email', None)
+            except Exception:
+                pass
+
+        if not user_email:
+            return {"success": False, "message": "Could not identify student email."}
+
         # 1. Hit the 3rd-Party API
         try:
             api_url = f"https://api.thirdparty.com/check-status?email={user_email}"
             response = requests.get(api_url, timeout=5)
             response_data = response.json()
-        except Exception:
-            return {"success": False, "message": "Failed to connect to verification server."}
+        except Exception as e:
+            return {"success": False, "message": f"Failed to connect to verification server: {str(e)}"}
 
         # 2. Check if the user completed the challenge
         if response_data.get("has_completed"):
             self.is_completed = True
-            
+
             # 3. Publish Grade / Completion to Open edX LMS
             # Marking completed = 1.0 (100%) unlocks course progress
             self.runtime.publish(self, "grade", {

@@ -1,0 +1,61 @@
+.challenge-container {
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    max-width: 600px;
+    margin: 15px 0;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.challenge-container h3 {
+    margin-top: 0;
+    color: #333333;
+    font-size: 1.25rem;
+}
+
+.challenge-container p {
+    color: #666666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.check-challenge-btn {
+    background-color: #0075b4;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.check-challenge-btn:hover {
+    background-color: #005a8b;
+}
+
+.check-challenge-btn:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+.check-challenge-btn.completed {
+    background-color: #28a745;
+}
+
+.status-message {
+    margin-top: 15px;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.status-message.success {
+    color: #28a745;
+}
+
+.status-message.error {
+    color: #dc3545;
+}
