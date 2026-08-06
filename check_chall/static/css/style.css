@@ -1,3 +1,4 @@
+/* LMS Student View Styles */
 .challenge-container {
     padding: 20px;
     border: 1px solid #e0e0e0;
@@ -58,4 +59,72 @@
 
 .status-message.error {
     color: #dc3545;
+}
+
+/* Studio Author Edit View Styles */
+.edit-xblock-studio {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    max-width: 700px;
+    font-family: sans-serif;
+}
+
+.edit-xblock-studio h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    color: #111;
+}
+
+.setting-item {
+    margin-bottom: 18px;
+}
+
+.setting-item label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.setting-item input[type="text"] {
+    width: 100%;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.setting-item .help {
+    display: block;
+    font-size: 0.82rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+.edit-xblock-studio .actions {
+    margin-top: 25px;
+    display: flex;
+    gap: 10px;
+}
+
+.edit-xblock-studio .button {
+    padding: 8px 18px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.edit-xblock-studio .save-button {
+    background-color: #0075b4;
+    color: #fff;
+}
+
+.edit-xblock-studio .cancel-button {
+    background-color: #e0e0e0;
+    color: #333;
 }
