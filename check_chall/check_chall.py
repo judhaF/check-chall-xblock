@@ -26,6 +26,11 @@ except ModuleNotFoundError:  # For backward compatibility with releases older th
 from web_fragments.fragment import Fragment
 
 
+
+loader = ResourceLoader(__name__)
+logger = logging.getLogger(__name__)
+
+
 class ExternalChallengeXBlock(    
     StudioEditableXBlockMixin,
     ScorableXBlockMixin,
@@ -129,7 +134,8 @@ class ExternalChallengeXBlock(
             </div>
         </div>
         """
-        fragment = Fragment(html)
+        fragment = Fragment()
+        fragment.add_content(html)
         fragment.add_javascript_url(self.runtime.local_resource_url(self, "static/js/studio_edit.js"))
         fragment.initialize_js('ExternalChallengeXBlockStudioInit')
         return fragment
