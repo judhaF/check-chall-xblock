@@ -1,16 +1,39 @@
-from xblock.core import XBlock
-from xblock.fields import Boolean, String, Scope
-from xblock.fragment import Fragment
-from xblockutils.studio_editable import StudioEditableXBlockMixin
+from __future__ import absolute_import
+from collections import Counter
+
+import copy
+import json
+import logging
+import re
+import urllib.parse
 import requests
 
+import six
+import webob
 
-class ExternalChallengeXBlock(StudioEditableXBlockMixin, XBlock):
+from xblock.core import XBlock
+from xblock.exceptions import JsonHandlerError
+from xblock.fields import Boolean, Dict, Float, Integer, Scope, String
+from xblock.scorable import ScorableXBlockMixin, Score
+try:
+    from xblock.utils.resources import ResourceLoader
+    from xblock.utils.settings import ThemableXBlockMixin, XBlockWithSettingsMixin
+except ModuleNotFoundError:  # For backward compatibility with releases older than Quince.
+    from xblockutils.resources import ResourceLoader
+    from xblockutils.settings import ThemableXBlockMixin, XBlockWithSettingsMixin
+from web_fragments.fragment import Fragment
+
+
+class ExternalChallengeXBlock(    
+    ScorableXBlockMixin,
+    XBlock,
+    XBlockWithSettingsMixin,
+    ThemableXBlockMixin
+):
     has_score = True
     has_custom_completion = True
 
-    # These are the fields that will appear in the Studio Edit modal
-    editable_fields = ('display_name', 'api_url', 'expected_key', 'expected_value')
+
 
     display_name = String(
         display_name="Display Name",
@@ -70,6 +93,55 @@ class ExternalChallengeXBlock(StudioEditableXBlockMixin, XBlock):
         """
         return self.student_view(context)
 
+    def studio_view(self, context=None):
+        """
+        Editing view presented to course authors in Open edX Studio.
+        """
+        html = f"""
+        <div class="wrapper-comp-settings eXblock-edit-settings">
+            <ul class="list-input settings-list">
+                <li class="field setting-point">
+                    <label class="label setting-label">Display Name</label>
+                    <input class="input setting-input" type="text" id="edit_display_name" value="{self.display_name}">
+                </li>
+                <li class="field setting-point">
+                    <label class="label setting-label">API Endpoint URL</label>
+                    <input class="input setting-input" type="text" id="edit_api_url" value="{self.api_url}">
+                    <span class="tip setting-help">Full URL. '?email=student@example.com' will be appended.</span>
+                </li>
+                <li class="field setting-point">
+                    <label class="label setting-label">Response JSON Key</label>
+                    <input class="input setting-input" type="text" id="edit_expected_key" value="{self.expected_key}">
+                </li>
+                <li class="field setting-point">
+                    <label class="label setting-label">Expected Success Value</label>
+                    <input class="input setting-input" type="text" id="edit_expected_value" value="{self.expected_value}">
+                </li>
+            </ul>
+            <div class="xblock-actions">
+                <ul>
+                    <li class="action-item"><a href="#" class="button action-primary save-button">Save</a></li>
+                    <li class="action-item"><a href="#" class="button cancel-button">Cancel</a></li>
+                </ul>
+            </div>
+        </div>
+        """
+        fragment = Fragment(html)
+        fragment.add_javascript_url(self.runtime.local_resource_url(self, "static/js/studio_edit.js"))
+        fragment.initialize_js('ExternalChallengeXBlockStudioInit')
+        return fragment
+
+    @XBlock.json_handler
+    def studio_submit(self, data, suffix=''):
+        """
+        Handler for saving author settings in Studio.
+        """
+        self.display_name = data.get('display_name', self.display_name)
+        self.api_url = data.get('api_url', self.api_url)
+        self.expected_key = data.get('expected_key', self.expected_key)
+        self.expected_value = data.get('expected_value', self.expected_value)
+        return {'result': 'success'}
+
     @XBlock.json_handler
     def verify_external_challenge(self, data, suffix=''):
         user_email = None
@@ -128,3 +200,24 @@ class ExternalChallengeXBlock(StudioEditableXBlockMixin, XBlock):
                 "success": False,
                 "message": f"Challenge not completed yet on platform. Received '{self.expected_key}': '{actual_val}' (expected '{self.expected_value}')."
             }
+    def has_submitted(self):
+        return self.is_completed
+
+    def calculate_score(self):
+        score = 1.0 if self.is_completed else 0.0
+        return Score(raw_earned=score, raw_possible=1.0)
+    @staticmethod
+    def workbench_scenarios():
+        """
+        Canned scenarios for display in the workbench.
+        """
+        return [
+            (
+                "External Challenge (Student View)",
+                """<check_chall/>""",
+            ),
+            (
+                "External Challenge (Studio Edit View)",
+                """<check_chall view="studio_view"/>""",
+            ),
+        ]

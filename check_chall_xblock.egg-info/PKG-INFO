@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: check-chall-xblock
+Version: 0.1.0
+Summary: XBlock that verifies external challenge completion
+Requires-Dist: XBlock
+Requires-Dist: xblock-utils
+Requires-Dist: requests
+Dynamic: requires-dist
+Dynamic: summary
