@@ -18,13 +18,16 @@ from xblock.scorable import ScorableXBlockMixin, Score
 try:
     from xblock.utils.resources import ResourceLoader
     from xblock.utils.settings import ThemableXBlockMixin, XBlockWithSettingsMixin
+    from xblock.utils.studio_editable import StudioEditableXBlockMixin
 except ModuleNotFoundError:  # For backward compatibility with releases older than Quince.
     from xblockutils.resources import ResourceLoader
     from xblockutils.settings import ThemableXBlockMixin, XBlockWithSettingsMixin
+    from xblockutils.studio_editable import StudioEditableXBlockMixin
 from web_fragments.fragment import Fragment
 
 
 class ExternalChallengeXBlock(    
+    StudioEditableXBlockMixin,
     ScorableXBlockMixin,
     XBlock,
     XBlockWithSettingsMixin,

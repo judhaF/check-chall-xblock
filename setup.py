@@ -7,7 +7,8 @@ def package_data(pkg, roots):
     for root in roots:
         for dirname, _, files in os.walk(os.path.join(pkg, root)):
             for fname in files:
-                data.append(os.path.relpath(os.path.join(dirname, fname), pkg))
+                rel_path = os.path.relpath(os.path.join(dirname, fname), pkg)
+                data.append(rel_path.replace('\\', '/'))
     return {pkg: data}
 
 setup(
