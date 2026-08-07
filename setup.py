@@ -19,7 +19,8 @@ setup(
     ],
     install_requires=[
         'XBlock',
-        'requests',  # Add any external Python dependencies here
+        'xblock-utils',  # Provides StudioEditableXBlockMixin for Studio edit form
+        'requests',
     ],
     # IMPORTANT: This entry point tells Open edX that this package contains an XBlock
     entry_points={

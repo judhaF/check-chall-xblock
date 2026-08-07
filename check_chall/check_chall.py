@@ -1,11 +1,16 @@
 from xblock.core import XBlock
 from xblock.fields import Boolean, String, Scope
 from xblock.fragment import Fragment
+from xblockutils.studio_editable import StudioEditableXBlockMixin
 import requests
 
-class ExternalChallengeXBlock(XBlock):
+
+class ExternalChallengeXBlock(StudioEditableXBlockMixin, XBlock):
     has_score = True
     has_custom_completion = True
+
+    # These are the fields that will appear in the Studio Edit modal
+    editable_fields = ('display_name', 'api_url', 'expected_key', 'expected_value')
 
     display_name = String(
         display_name="Display Name",
@@ -18,26 +23,26 @@ class ExternalChallengeXBlock(XBlock):
         display_name="API Endpoint URL",
         default="https://api.thirdparty.com/check-status",
         scope=Scope.settings,
-        help="Custom 3rd-party API URL to hit for verifying student completion status."
+        help="The full API URL to hit. ?email=student@example.com will be appended automatically."
     )
 
     expected_key = String(
         display_name="Response JSON Key",
         default="has_completed",
         scope=Scope.settings,
-        help="The key in the API JSON response to inspect (e.g. 'has_completed', 'status')."
+        help="The key in the API JSON response to inspect (e.g. 'has_completed', 'status', 'success')."
     )
 
     expected_value = String(
         display_name="Expected Success Value",
         default="true",
         scope=Scope.settings,
-        help="The expected value indicating completion (e.g. 'true', 'completed', 'passed')."
+        help="The value that indicates completion (e.g. 'true', 'completed', 'passed', '1')."
     )
 
     is_completed = Boolean(
-        default=False, 
-        scope=Scope.user_state, 
+        default=False,
+        scope=Scope.user_state,
         help="Tracks if student completed the external challenge"
     )
 
