@@ -30,5 +30,11 @@ setup(
         ],
     },
     # Includes all CSS, JS, HTML, and image static files in the Python build package
-    package_data=package_data("check_chall", ["static", "public"]),
+    package_data={
+        'check_chall': [
+            'static/css/*',
+            'static/js/*',
+            'public/*',
+        ],
+    },
 )
