@@ -32,7 +32,6 @@ logger = logging.getLogger(__name__)
 
 @XBlock.wants('user')
 class ExternalChallengeXBlock(    
-    StudioEditableXBlockMixin,
     ScorableXBlockMixin,
     XBlock,
     XBlockWithSettingsMixin,
