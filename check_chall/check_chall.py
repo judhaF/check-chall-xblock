@@ -89,10 +89,11 @@ class ExternalChallengeXBlock(
         </div>
         """
         fragment = Fragment(html)
-        css_content = loader.load_unicode("static/css/style.css")
-        js_content = loader.load_unicode("static/js/check_status.js")        
-        fragment.add_javascript(js_content)
-        fragment.add_css(css_content)
+        css_url = 'public/css/style.css'
+        js_url = 'public/js/check_status.js'
+
+        fragment.add_css_url(self.runtime.local_resource_url(self, css_url))
+        fragment.add_javascript_url(self.runtime.local_resource_url(self, js_url))
         fragment.initialize_js('ExternalChallengeXBlockInit')
         return fragment
 
@@ -104,30 +105,30 @@ class ExternalChallengeXBlock(
 
     def studio_view(self, context=None):
         """
-        Editing view presented to course authors in Open edX Studio.
+        Editing view in Studio.
         """
         html = f"""
-        <div class="editor-with-buttons">
+        <div class="xblock--check-chall--editor editor-with-buttons">
             <div class="wrapper-comp-settings">
                 <ul class="list-input settings-list">
                     <li class="field setting-point">
                         <label class="label setting-label" for="edit_display_name">Display Name</label>
-                        <input class="input setting-input" type="text" id="edit_display_name" value="{self.display_name}">
+                        <input class="input setting-input display-name" type="text" id="edit_display_name" value="{self.display_name}">
                         <span class="tip setting-help">Title of this component shown to students.</span>
                     </li>
                     <li class="field setting-point">
                         <label class="label setting-label" for="edit_api_url">Custom API Endpoint URL</label>
-                        <input class="input setting-input" type="text" id="edit_api_url" value="{self.api_url}">
+                        <input class="input setting-input api-url" type="text" id="edit_api_url" value="{self.api_url}">
                         <span class="tip setting-help">The API URL to hit. ?email=user@example.com will automatically be appended.</span>
                     </li>
                     <li class="field setting-point">
                         <label class="label setting-label" for="edit_expected_key">Response JSON Key</label>
-                        <input class="input setting-input" type="text" id="edit_expected_key" value="{self.expected_key}">
+                        <input class="input setting-input expected-key" type="text" id="edit_expected_key" value="{self.expected_key}">
                         <span class="tip setting-help">The JSON key in the API response to evaluate.</span>
                     </li>
                     <li class="field setting-point">
                         <label class="label setting-label" for="edit_expected_value">Expected Success Value</label>
-                        <input class="input setting-input" type="text" id="edit_expected_value" value="{self.expected_value}">
+                        <input class="input setting-input expected-value" type="text" id="edit_expected_value" value="{self.expected_value}">
                         <span class="tip setting-help">The value required for completion.</span>
                     </li>
                 </ul>
@@ -146,14 +147,24 @@ class ExternalChallengeXBlock(
         </div>
         """
         fragment = Fragment()
-        css_content = loader.load_unicode("static/css/style.css")
-        js_content = loader.load_unicode("static/js/studio_edit.js")
         fragment.add_content(html)
-        fragment.add_javascript(js_content)
-        fragment.add_css(css_content)
-        fragment.initialize_js('ExternalChallengeStudioInit')
-        return fragment
 
+        # Load resources using local_resource_url as in official XBlocks
+        css_url = 'public/css/style.css'
+        js_url = 'public/js/studio_edit.js'
+
+        fragment.add_css_url(self.runtime.local_resource_url(self, css_url))
+        fragment.add_javascript_url(self.runtime.local_resource_url(self, js_url))
+
+        # Pass explicit initial context object to JS init function
+        fragment.initialize_js('ExternalChallengeStudioInit', {
+            'display_name': self.display_name,
+            'api_url': self.api_url,
+            'expected_key': self.expected_key,
+            'expected_value': self.expected_value,
+        })
+
+        return fragment
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
         """
