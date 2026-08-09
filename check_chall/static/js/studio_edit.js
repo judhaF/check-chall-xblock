@@ -1,4 +1,4 @@
-window.ExternalChallengeXBlockStudioInit = function(runtime, element) {
+window.ExternalChallengeStudioInit = function(runtime, element) {
     var $element = $(element);
 
     $element.find('.save-button').on('click', function(e) {

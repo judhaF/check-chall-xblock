@@ -143,7 +143,7 @@ class ExternalChallengeXBlock(
         fragment.add_content(html)
         fragment.add_javascript(js_content)
         fragment.add_css(css_content)
-        fragment.initialize_js('ExternalChallengeXBlockStudioInit')
+        fragment.initialize_js('ExternalChallengeStudioInit')
         return fragment
 
     @XBlock.json_handler
