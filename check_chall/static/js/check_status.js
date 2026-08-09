@@ -1,4 +1,4 @@
-function ExternalChallengeXBlockInit(runtime, element) {
+window.ExternalChallengeXBlockInit = function(runtime, element) {
     var handlerUrl = runtime.handlerUrl(element, 'verify_external_challenge');
     var $button = $('.check-challenge-btn', element);
     var $statusMsg = $('.status-message', element);
@@ -6,7 +6,6 @@ function ExternalChallengeXBlockInit(runtime, element) {
     $button.click(function(eventObject) {
         $button.prop('disabled', true).text('Verifying...');
         $statusMsg.removeClass('success error').text('Checking status with external server...');
-
         $.ajax({
             type: "POST",
             url: handlerUrl,
@@ -14,6 +13,7 @@ function ExternalChallengeXBlockInit(runtime, element) {
             contentType: "application/json",
             dataType: "json",
             success: function(response) {
+                console.log(response)
                 if (response.success) {
                     $statusMsg.removeClass('error').addClass('success').text(response.message);
                     $button.text('Verified').addClass('completed');

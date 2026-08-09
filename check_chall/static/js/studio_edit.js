@@ -1,31 +1,44 @@
-function ExternalChallengeStudioInit(runtime, element) {
-    var handlerUrl = runtime.handlerUrl(element, 'studio_submit');
+window.ExternalChallengeXBlockStudioInit = function(runtime, element) {
+    var $element = $(element);
 
-    $(element).find('.save-button').bind('click', function() {
+    $element.find('.save-button').on('click', function(e) {
+        e.preventDefault();
+
+        var handlerUrl = runtime.handlerUrl(element, 'studio_submit');
         var data = {
-            display_name: $(element).find('#edit_display_name').val(),
-            api_url: $(element).find('#edit_api_url').val(),
-            expected_key: $(element).find('#edit_expected_key').val(),
-            expected_value: $(element).find('#edit_expected_value').val()
+            display_name: $element.find('#edit_display_name').val(),
+            api_url: $element.find('#edit_api_url').val(),
+            expected_key: $element.find('#edit_expected_key').val(),
+            expected_value: $element.find('#edit_expected_value').val()
         };
 
-        runtime.notify('save', {state: 'start'});
+        if (runtime.notify) {
+            runtime.notify('save', {state: 'start'});
+        }
+
         $.ajax({
             type: "POST",
             url: handlerUrl,
             data: JSON.stringify(data),
-            contentType: "application/json",
+            contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(response) {
-                runtime.notify('save', {state: 'end'});
+                if (runtime.notify) {
+                    runtime.notify('save', {state: 'end'});
+                } else {
+                    alert('Settings saved successfully!');
+                }
             },
             error: function() {
-                runtime.notify('error', {msg: 'Failed to save settings'});
+                alert('Failed to save settings.');
             }
         });
     });
 
-    $(element).find('.cancel-button').bind('click', function() {
-        runtime.notify('cancel', {});
+    $element.find('.cancel-button').on('click', function(e) {
+        e.preventDefault();
+        if (runtime.notify) {
+            runtime.notify('cancel', {});
+        }
     });
-}
+};

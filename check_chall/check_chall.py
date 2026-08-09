@@ -30,7 +30,7 @@ from web_fragments.fragment import Fragment
 loader = ResourceLoader(__name__)
 logger = logging.getLogger(__name__)
 
-
+@XBlock.wants('user')
 class ExternalChallengeXBlock(    
     StudioEditableXBlockMixin,
     ScorableXBlockMixin,
@@ -90,8 +90,10 @@ class ExternalChallengeXBlock(
         </div>
         """
         fragment = Fragment(html)
-        fragment.add_css_url(self.runtime.local_resource_url(self, "static/css/style.css"))
-        fragment.add_javascript_url(self.runtime.local_resource_url(self, "static/js/check_status.js"))
+        css_content = loader.load_unicode("static/css/style.css")
+        js_content = loader.load_unicode("static/js/check_status.js")        
+        fragment.add_javascript(js_content)
+        fragment.add_css(css_content)
         fragment.initialize_js('ExternalChallengeXBlockInit')
         return fragment
 
@@ -106,37 +108,42 @@ class ExternalChallengeXBlock(
         Editing view presented to course authors in Open edX Studio.
         """
         html = f"""
-        <div class="wrapper-comp-settings eXblock-edit-settings">
-            <ul class="list-input settings-list">
-                <li class="field setting-point">
-                    <label class="label setting-label">Display Name</label>
-                    <input class="input setting-input" type="text" id="edit_display_name" value="{self.display_name}">
-                </li>
-                <li class="field setting-point">
-                    <label class="label setting-label">API Endpoint URL</label>
-                    <input class="input setting-input" type="text" id="edit_api_url" value="{self.api_url}">
-                    <span class="tip setting-help">Full URL. '?email=student@example.com' will be appended.</span>
-                </li>
-                <li class="field setting-point">
-                    <label class="label setting-label">Response JSON Key</label>
-                    <input class="input setting-input" type="text" id="edit_expected_key" value="{self.expected_key}">
-                </li>
-                <li class="field setting-point">
-                    <label class="label setting-label">Expected Success Value</label>
-                    <input class="input setting-input" type="text" id="edit_expected_value" value="{self.expected_value}">
-                </li>
-            </ul>
-            <div class="xblock-actions">
-                <ul>
-                    <li class="action-item"><a href="#" class="button action-primary save-button">Save</a></li>
-                    <li class="action-item"><a href="#" class="button cancel-button">Cancel</a></li>
-                </ul>
+        <div class="edit-xblock-studio">
+            <h2>Edit External Challenge Verification</h2>
+            
+            <div class="setting-item">
+                <label for="edit_display_name">Display Name</label>
+                <input type="text" id="edit_display_name" value="{self.display_name}">
+            </div>
+
+            <div class="setting-item">
+                <label for="edit_api_url">API Endpoint URL</label>
+                <input type="text" id="edit_api_url" value="{self.api_url}">
+                <span class="help">Full URL. '?email=student@example.com' will be appended automatically.</span>
+            </div>
+
+            <div class="setting-item">
+                <label for="edit_expected_key">Response JSON Key</label>
+                <input type="text" id="edit_expected_key" value="{self.expected_key}">
+            </div>
+
+            <div class="setting-item">
+                <label for="edit_expected_value">Expected Success Value</label>
+                <input type="text" id="edit_expected_value" value="{self.expected_value}">
+            </div>
+
+            <div class="actions">
+                <button type="button" class="button save-button">Save</button>
+                <button type="button" class="button cancel-button">Cancel</button>
             </div>
         </div>
         """
         fragment = Fragment()
+        css_content = loader.load_unicode("static/css/style.css")
+        js_content = loader.load_unicode("static/js/studio_edit.js")
         fragment.add_content(html)
-        fragment.add_javascript_url(self.runtime.local_resource_url(self, "static/js/studio_edit.js"))
+        fragment.add_javascript(js_content)
+        fragment.add_css(css_content)
         fragment.initialize_js('ExternalChallengeXBlockStudioInit')
         return fragment
 
@@ -160,7 +167,7 @@ class ExternalChallengeXBlock(
         if user_service:
             user = user_service.get_current_user()
             user_email = getattr(user, 'email', None)
-
+        print(f"Masuk sini {user}")
         # Fallback for runtime environment
         if not user_email and hasattr(self.runtime, 'get_real_user') and hasattr(self.runtime, 'anonymous_student_id'):
             try:
@@ -170,7 +177,7 @@ class ExternalChallengeXBlock(
                 pass
 
         if not user_email:
-            return {"success": False, "message": "Could not identify student email."}
+            return {"success": False, "message": "Could not identify student email.: "}
 
         # 1. Hit the custom 3rd-Party API URL configured by the lecturer
         try:
@@ -209,6 +216,7 @@ class ExternalChallengeXBlock(
                 "success": False,
                 "message": f"Challenge not completed yet on platform. Received '{self.expected_key}': '{actual_val}' (expected '{self.expected_value}')."
             }
+        
     def has_submitted(self):
         return self.is_completed
 
