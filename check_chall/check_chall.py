@@ -107,33 +107,37 @@ class ExternalChallengeXBlock(
         Editing view presented to course authors in Open edX Studio.
         """
         html = f"""
-        <div class="edit-xblock-studio">
-            <h2>Edit External Challenge Verification</h2>
-            
-            <div class="setting-item">
-                <label for="edit_display_name">Display Name</label>
-                <input type="text" id="edit_display_name" value="{self.display_name}">
-            </div>
-
-            <div class="setting-item">
-                <label for="edit_api_url">API Endpoint URL</label>
-                <input type="text" id="edit_api_url" value="{self.api_url}">
-                <span class="help">Full URL. '?email=student@example.com' will be appended automatically.</span>
-            </div>
-
-            <div class="setting-item">
-                <label for="edit_expected_key">Response JSON Key</label>
-                <input type="text" id="edit_expected_key" value="{self.expected_key}">
-            </div>
-
-            <div class="setting-item">
-                <label for="edit_expected_value">Expected Success Value</label>
-                <input type="text" id="edit_expected_value" value="{self.expected_value}">
-            </div>
-
-            <div class="actions">
-                <button type="button" class="button save-button">Save</button>
-                <button type="button" class="button cancel-button">Cancel</button>
+        <div class="component-edit-xblock">
+            <div class="wrapper-comp-settings edit-xblock-studio">
+                <h2>Settings: External Challenge Verification</h2>
+                <ul class="list-input settings-list" style="list-style: none; padding: 0;">
+                    <li class="field setting-point setting-item">
+                        <label class="label setting-label" for="edit_display_name">Display Name</label>
+                        <input class="input setting-input" type="text" id="edit_display_name" value="{self.display_name}">
+                        <span class="tip setting-help">Title of this component shown to students.</span>
+                    </li>
+                    <li class="field setting-point setting-item">
+                        <label class="label setting-label" for="edit_api_url">Custom API Endpoint URL</label>
+                        <input class="input setting-input" type="text" id="edit_api_url" value="{self.api_url}">
+                        <span class="tip setting-help">The API URL to hit. ?email=user@example.com will automatically be appended.</span>
+                    </li>
+                    <li class="field setting-point setting-item">
+                        <label class="label setting-label" for="edit_expected_key">Response JSON Key</label>
+                        <input class="input setting-input" type="text" id="edit_expected_key" value="{self.expected_key}">
+                        <span class="tip setting-help">The JSON key in the API response to evaluate.</span>
+                    </li>
+                    <li class="field setting-point setting-item">
+                        <label class="label setting-label" for="edit_expected_value">Expected Success Value</label>
+                        <input class="input setting-input" type="text" id="edit_expected_value" value="{self.expected_value}">
+                        <span class="tip setting-help">The value required for completion.</span>
+                    </li>
+                </ul>
+                <div class="xblock-actions actions">
+                    <ul>
+                        <li class="action-item"><button type="button" class="action-primary save-button">Save</button></li>
+                        <li class="action-item"><button type="button" class="button cancel-button">Cancel</button></li>
+                    </ul>
+                </div>
             </div>
         </div>
         """
