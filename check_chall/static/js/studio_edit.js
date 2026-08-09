@@ -26,11 +26,15 @@ window.ExternalChallengeStudioInit = function(runtime, element) {
                 if (runtime.notify) {
                     runtime.notify('save', {state: 'end'});
                 } else {
-                    alert('Settings saved successfully!');
+                    alert('Settings saved!');
                 }
             },
             error: function() {
-                alert('Failed to save settings.');
+                if (runtime.notify) {
+                    runtime.notify('error', {message: 'Failed to save settings.'});
+                } else {
+                    alert('Error saving settings.');
+                }
             }
         });
     });
