@@ -107,24 +107,28 @@ class ExternalChallengeXBlock(
         """
         Editing view in Studio.
         """
-        html = f"""<div class="wrapper-comp-settings edit-xblock-studio">
+        html = f"""<div class="xblock wrapper-comp-settings editor-with-buttons edit-xblock-studio">
             <h2>Settings: External Challenge Verification</h2>
             <ul class="list-input settings-list" style="list-style: none; padding: 0;">
                 <li class="field setting-point setting-item">
                     <label class="label setting-label" for="edit_display_name">Display Name</label>
                     <input class="input setting-input" type="text" id="edit_display_name" value="{self.display_name}">
+                    <span class="tip setting-help">Title of this component shown to students.</span>
                 </li>
                 <li class="field setting-point setting-item">
                     <label class="label setting-label" for="edit_api_url">Custom API Endpoint URL</label>
                     <input class="input setting-input" type="text" id="edit_api_url" value="{self.api_url}">
+                    <span class="tip setting-help">The API URL to hit. ?email=user@example.com will automatically be appended.</span>
                 </li>
                 <li class="field setting-point setting-item">
                     <label class="label setting-label" for="edit_expected_key">Response JSON Key</label>
                     <input class="input setting-input" type="text" id="edit_expected_key" value="{self.expected_key}">
+                    <span class="tip setting-help">The JSON key in the API response to evaluate.</span>
                 </li>
                 <li class="field setting-point setting-item">
                     <label class="label setting-label" for="edit_expected_value">Expected Success Value</label>
                     <input class="input setting-input" type="text" id="edit_expected_value" value="{self.expected_value}">
+                    <span class="tip setting-help">The value required for completion.</span>
                 </li>
             </ul>
             <div class="xblock-actions actions">
