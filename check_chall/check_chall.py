@@ -10,7 +10,7 @@ import requests
 
 import six
 import webob
-
+import html
 from xblock.core import XBlock
 from xblock.exceptions import JsonHandlerError
 from xblock.fields import Boolean, Dict, Float, Integer, Scope, String
