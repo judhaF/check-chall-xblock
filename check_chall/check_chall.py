@@ -105,10 +105,11 @@ class ExternalChallengeXBlock(
 
     def studio_view(self, context=None):
         """
-        Editing view in Studio.
+        Editing view presented to course authors inside Studio iframe modal and SDK Workbench.
         """
-        html = f"""<div class="xblock wrapper-comp-settings editor-with-buttons edit-xblock-studio">
-            <h2>Settings: External Challenge Verification</h2>
+        html = f"""
+        <div class="xblock wrapper-comp-settings editor-with-buttons modal-content">
+            <h2 class="title">Settings: External Challenge Verification</h2>
             <ul class="list-input settings-list" style="list-style: none; padding: 0;">
                 <li class="field setting-point setting-item">
                     <label class="label setting-label" for="edit_display_name">Display Name</label>
@@ -132,31 +133,23 @@ class ExternalChallengeXBlock(
                 </li>
             </ul>
             <div class="xblock-actions actions">
-                <ul>
-                    <li class="action-item"><button type="button" class="action-primary save-button">Save</button></li>
+                <ul class="action-list" style="list-style: none; padding: 0; display: flex; gap: 10px;">
+                    <li class="action-item"><button type="button" class="action-primary save-button button">Save</button></li>
                     <li class="action-item"><button type="button" class="button cancel-button">Cancel</button></li>
                 </ul>
             </div>
-        </div>"""
-        fragment = Fragment()
-        fragment.add_content(html)
+        </div>
+        """
+        fragment = Fragment(html)
 
-        # Load resources using local_resource_url as in official XBlocks
-        css_url = 'public/css/style.css'
-        js_url = 'public/js/studio_edit.js'
+        css_content = loader.load_unicode("public/css/style.css")
+        js_content = loader.load_unicode("public/js/studio_edit.js")
 
-        fragment.add_css_url(self.runtime.local_resource_url(self, css_url))
-        fragment.add_javascript_url(self.runtime.local_resource_url(self, js_url))
-
-        # Pass explicit initial context object to JS init function
-        fragment.initialize_js('ExternalChallengeStudioInit', {
-            'display_name': self.display_name,
-            'api_url': self.api_url,
-            'expected_key': self.expected_key,
-            'expected_value': self.expected_value,
-        })
-
+        fragment.add_css(css_content)
+        fragment.add_javascript(js_content)
+        fragment.initialize_js('ExternalChallengeStudioInit')
         return fragment
+
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
         """
