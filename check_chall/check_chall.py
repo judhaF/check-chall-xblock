@@ -34,13 +34,15 @@ logger = logging.getLogger(__name__)
 class ExternalChallengeXBlock(    
     ScorableXBlockMixin,
     XBlock,
+    StudioEditableXBlockMixin,
     XBlockWithSettingsMixin,
     ThemableXBlockMixin
 ):
+    """
+    External Challenge XBlock - Verify student completion via external API
+    """
     has_score = True
     has_custom_completion = True
-
-
 
     display_name = String(
         display_name="Display Name",
@@ -76,6 +78,14 @@ class ExternalChallengeXBlock(
         help="Tracks if student completed the external challenge"
     )
 
+    # Auto-generate studio edit form with these fields
+    editable_fields = (
+        'display_name',
+        'api_url',
+        'expected_key',
+        'expected_value',
+    )
+
     def student_view(self, context=None):
         """
         Primary view shown to students in LMS and previewed in Studio.
@@ -103,64 +113,6 @@ class ExternalChallengeXBlock(
         """
         return self.student_view(context)
 
-    def studio_view(self, context=None):
-        """
-        Editing view in Studio.
-        
-        ✅ FIXED: Use Fragment(html_content) directly instead of Fragment().add_content()
-        """
-        html_content = f"""<div class="wrapper-comp-settings edit-xblock-studio">
-            <h2>Settings: External Challenge Verification</h2>
-            <ul class="list-input settings-list" style="list-style: none; padding: 0;">
-                <li class="field setting-point setting-item">
-                    <label class="label setting-label" for="edit_display_name">Display Name</label>
-                    <input class="input setting-input" type="text" id="edit_display_name" value="{html.escape(self.display_name, quote=True)}">
-                    <span class="tip setting-help">Title of this component shown to students.</span>
-                </li>
-                <li class="field setting-point setting-item">
-                    <label class="label setting-label" for="edit_api_url">Custom API Endpoint URL</label>
-                    <input class="input setting-input" type="text" id="edit_api_url" value="{html.escape(self.api_url, quote=True)}">
-                    <span class="tip setting-help">The API URL to hit. ?email=user@example.com will automatically be appended.</span>
-                </li>
-                <li class="field setting-point setting-item">
-                    <label class="label setting-label" for="edit_expected_key">Response JSON Key</label>
-                    <input class="input setting-input" type="text" id="edit_expected_key" value="{html.escape(self.expected_key, quote=True)}">
-                    <span class="tip setting-help">The JSON key in the API response to evaluate.</span>
-                </li>
-                <li class="field setting-point setting-item">
-                    <label class="label setting-label" for="edit_expected_value">Expected Success Value</label>
-                    <input class="input setting-input" type="text" id="edit_expected_value" value="{html.escape(self.expected_value, quote=True)}">
-                    <span class="tip setting-help">The value required for completion.</span>
-                </li>
-            </ul>
-            <div class="xblock-actions actions">
-                <ul>
-                    <li class="action-item"><button type="button" class="action-primary save-button">Save</button></li>
-                    <li class="action-item"><button type="button" class="button cancel-button">Cancel</button></li>
-                </ul>
-            </div>
-        </div>"""
-
-        # ✅ FIXED: Create Fragment with html_content directly
-        fragment = Fragment(html_content)
-
-        # Load resources
-        css_url = 'public/css/style.css'
-        js_url = 'public/js/studio_edit.js'
-
-        fragment.add_css_url(self.runtime.local_resource_url(self, css_url))
-        fragment.add_javascript_url(self.runtime.local_resource_url(self, js_url))
-
-        # Pass explicit initial context object to JS init function
-        fragment.initialize_js('ExternalChallengeStudioInit', {
-            'display_name': self.display_name,
-            'api_url': self.api_url,
-            'expected_key': self.expected_key,
-            'expected_value': self.expected_value,
-        })
-
-        return fragment
-
     @XBlock.json_handler
     def studio_submit(self, data, suffix=''):
         """
@@ -174,6 +126,9 @@ class ExternalChallengeXBlock(
 
     @XBlock.json_handler
     def verify_external_challenge(self, data, suffix=''):
+        """
+        Handler to verify student completion status via external API
+        """
         user_email = None
 
         # Safely retrieve student email via XBlock User Service
@@ -181,7 +136,9 @@ class ExternalChallengeXBlock(
         if user_service:
             user = user_service.get_current_user()
             user_email = getattr(user, 'email', None)
+        
         print(f"Masuk sini {user}")
+        
         # Fallback for runtime environment
         if not user_email and hasattr(self.runtime, 'get_real_user') and hasattr(self.runtime, 'anonymous_student_id'):
             try:
@@ -232,9 +189,15 @@ class ExternalChallengeXBlock(
             }
         
     def has_submitted(self):
+        """
+        Returns True if student has completed the challenge
+        """
         return self.is_completed
 
     def calculate_score(self):
+        """
+        Calculate the score for this XBlock
+        """
         score = 1.0 if self.is_completed else 0.0
         return Score(raw_earned=score, raw_possible=1.0)
     
