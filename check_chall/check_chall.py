@@ -106,6 +106,8 @@ class ExternalChallengeXBlock(
     def studio_view(self, context=None):
         """
         Editing view in Studio.
+        
+        ✅ FIXED: Use Fragment(html_content) directly instead of Fragment().add_content()
         """
         html_content = f"""<div class="wrapper-comp-settings edit-xblock-studio">
             <h2>Settings: External Challenge Verification</h2>
@@ -139,8 +141,8 @@ class ExternalChallengeXBlock(
             </div>
         </div>"""
 
-        fragment = Fragment()
-        fragment.add_content(html_content)
+        # ✅ FIXED: Create Fragment with html_content directly
+        fragment = Fragment(html_content)
 
         # Load resources
         css_url = 'public/css/style.css'
@@ -235,6 +237,7 @@ class ExternalChallengeXBlock(
     def calculate_score(self):
         score = 1.0 if self.is_completed else 0.0
         return Score(raw_earned=score, raw_possible=1.0)
+    
     @staticmethod
     def workbench_scenarios():
         """
