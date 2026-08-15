@@ -1,131 +1,142 @@
-/* LMS Student View Styles */
+/* External Challenge XBlock Styling */
+
+/* ======================== */
+/* STUDENT VIEW */
+/* ======================== */
+
 .challenge-container {
     padding: 20px;
-    border: 1px solid #e0e0e0;
+    background: white;
     border-radius: 8px;
-    background-color: #ffffff;
     max-width: 600px;
-    margin: 15px 0;
-    font-family: Arial, sans-serif;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin: 20px 0;
+    border: 1px solid #e0e0e0;
 }
 
 .challenge-container h3 {
-    margin-top: 0;
-    color: #333333;
-    font-size: 1.25rem;
+    margin: 0 0 15px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
 }
 
 .challenge-container p {
-    color: #666666;
-    margin-bottom: 15px;
+    margin: 0 0 20px 0;
+    font-size: 15px;
+    color: #666;
     line-height: 1.5;
 }
 
 .check-challenge-btn {
-    background-color: #0075b4;
-    color: #ffffff;
-    border: none;
     padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: 600;
+    background: #0068B4;
+    color: white;
+    border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
 }
 
-.check-challenge-btn:hover {
-    background-color: #005a8b;
+.check-challenge-btn:hover:not(:disabled) {
+    background: #005A9E;
 }
 
 .check-challenge-btn:disabled {
-    background-color: #a0a0a0;
+    opacity: 0.6;
     cursor: not-allowed;
 }
 
-.check-challenge-btn.completed {
-    background-color: #28a745;
-}
-
 .status-message {
+    padding: 12px 15px;
+    border-radius: 4px;
+    border-left: 4px solid #ddd;
     margin-top: 15px;
-    font-size: 0.95rem;
-    font-weight: 500;
+    display: none;
+    font-size: 14px;
 }
 
 .status-message.success {
-    color: #28a745;
+    background: #e8f5e9;
+    border-left-color: #4CAF50;
+    color: #2e7d32;
 }
 
 .status-message.error {
-    color: #dc3545;
+    background: #ffebee;
+    border-left-color: #f44336;
+    color: #c62828;
 }
 
-/* Studio Author Edit View Styles */
-.editor-with-buttons,
-.wrapper-comp-settings {
+/* ======================== */
+/* STUDIO VIEW */
+/* ======================== */
+
+.wrapper-comp-settings.edit-xblock-studio {
     padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    max-width: 700px;
-    font-family: Arial, sans-serif;
-    box-sizing: border-box;
+    background: white;
+    border-radius: 4px;
 }
 
-.wrapper-comp-settings h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 1.3rem;
-    color: #111;
+.wrapper-comp-settings.edit-xblock-studio h2 {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
 }
 
 .settings-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    margin: 0 0 20px 0;
 }
 
-.field.setting-point {
-    margin-bottom: 18px;
-    list-style: none;
+.setting-item {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.label.setting-label {
+.setting-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.setting-label {
     display: block;
-    font-weight: bold;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    font-weight: 600;
     color: #333;
-    font-size: 0.95rem;
+    font-size: 15px;
 }
 
-.input.setting-input {
+.setting-input {
     width: 100%;
-    padding: 8px 12px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
+    padding: 10px 12px;
+    border: 1px solid #d0d0d0;
     border-radius: 4px;
-    font-size: 0.95rem;
-    background-color: #fff;
+    font-size: 14px;
+    box-sizing: border-box;
 }
 
-.input.setting-input:focus {
-    border-color: #0075b4;
+.setting-input:focus {
     outline: none;
+    border-color: #0068B4;
+    box-shadow: 0 0 0 3px rgba(0, 104, 180, 0.1);
 }
 
-.tip.setting-help {
+.setting-help {
     display: block;
-    font-size: 0.82rem;
-    color: #666;
-    margin-top: 4px;
-    line-height: 1.3;
+    margin-top: 6px;
+    font-size: 13px;
+    color: #999;
 }
 
 .xblock-actions {
-    margin-top: 25px;
-    padding-top: 15px;
-    border-top: 1px solid #e0e0e0;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
 }
 
 .xblock-actions ul {
@@ -136,38 +147,64 @@
     gap: 10px;
 }
 
-.xblock-actions .action-item {
-    display: inline-block;
+.action-item {
+    margin: 0;
 }
 
-.xblock-actions .button {
-    display: inline-block;
-    padding: 8px 18px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
+.action-primary {
+    background: #0068B4;
+    color: white;
+    padding: 10px 20px;
     border: none;
-    text-decoration: none;
-    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
 }
 
-.xblock-actions .save-button,
-.xblock-actions .action-primary {
-    background-color: #0075b4;
-    color: #ffffff !important;
+.action-primary:hover {
+    background: #005A9E;
 }
 
-.xblock-actions .save-button:hover,
-.xblock-actions .action-primary:hover {
-    background-color: #005a8b;
+.cancel-button {
+    background: #f0f0f0;
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
 }
 
-.xblock-actions .cancel-button {
-    background-color: #e0e0e0;
-    color: #333333 !important;
+.cancel-button:hover {
+    background: #e0e0e0;
 }
 
-.xblock-actions .cancel-button:hover {
-    background-color: #d0d0d0;
+/* ======================== */
+/* RESPONSIVE */
+/* ======================== */
+
+@media (max-width: 600px) {
+    .challenge-container {
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    .wrapper-comp-settings.edit-xblock-studio {
+        padding: 15px;
+    }
+
+    .xblock-actions ul {
+        flex-direction: column;
+    }
+
+    .action-item {
+        width: 100%;
+    }
+
+    .action-primary,
+    .cancel-button {
+        width: 100%;
+    }
 }
