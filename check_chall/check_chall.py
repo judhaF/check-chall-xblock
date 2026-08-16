@@ -143,17 +143,29 @@ class ExternalChallengeXBlock(
         if not user_email and hasattr(self.runtime, 'get_real_user') and hasattr(self.runtime, 'anonymous_student_id'):
             try:
                 real_user = self.runtime.get_real_user(self.runtime.anonymous_student_id)
-                user_email = getattr(real_user, 'email', None)
+                # user_email = getattr(real_user, 'email', None)
+                username = getattr(real_user, 'username', None)
             except Exception:
                 pass
 
-        if not user_email:
-            return {"success": False, "message": "Could not identify student email.: "}
+        # 2. Fallback for Open edX LMS runtime environment
+        if not username and hasattr(self.runtime, 'get_real_user') and hasattr(self.runtime, 'anonymous_student_id'):
+            try:
+                real_user = self.runtime.get_real_user(self.runtime.anonymous_student_id)
+                username = getattr(real_user, 'username', None)
+            except Exception:
+                pass
 
-        # 1. Hit the custom 3rd-Party API URL configured by the lecturer
-        try:
+        if not username:
+            return {"success": False, "message": "Could not identify student username."}
+
+        if "{username}" in self.api_url:
+            url = self.api_url.replace("{username}", username)
+        else:
             sep = "&" if "?" in self.api_url else "?"
-            url = f"{self.api_url}{sep}email={user_email}"
+            url = f"{self.api_url}{sep}username={username}"
+
+        try:
             response = requests.get(url, timeout=7)
             response_data = response.json()
         except Exception as e:
