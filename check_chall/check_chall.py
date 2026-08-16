@@ -129,24 +129,16 @@ class ExternalChallengeXBlock(
         """
         Handler to verify student completion status via external API
         """
-        user_email = None
+        username = None
 
         # Safely retrieve student email via XBlock User Service
-        user_service = self.runtime.service(self, 'user')
-        if user_service:
-            user = user_service.get_current_user()
-            user_email = getattr(user, 'email', None)
-        
-        print(f"Masuk sini {user}")
-        
-        # Fallback for runtime environment
-        if not user_email and hasattr(self.runtime, 'get_real_user') and hasattr(self.runtime, 'anonymous_student_id'):
-            try:
-                real_user = self.runtime.get_real_user(self.runtime.anonymous_student_id)
-                # user_email = getattr(real_user, 'email', None)
-                username = getattr(real_user, 'username', None)
-            except Exception:
-                pass
+        try:
+            user_service = self.runtime.service(self, 'user')
+            if user_service:
+                user = user_service.get_current_user()
+                username = getattr(user, 'username', None)
+        except Exception as e:
+            logger.info(f"User service lookup error: {e}")
 
         # 2. Fallback for Open edX LMS runtime environment
         if not username and hasattr(self.runtime, 'get_real_user') and hasattr(self.runtime, 'anonymous_student_id'):
@@ -155,7 +147,7 @@ class ExternalChallengeXBlock(
                 username = getattr(real_user, 'username', None)
             except Exception:
                 pass
-
+        
         if not username:
             return {"success": False, "message": "Could not identify student username."}
 
