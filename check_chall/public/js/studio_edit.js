@@ -31,7 +31,7 @@ function ExternalChallengeStudioInit(runtime, element, initArgs) {
     if (initArgs) {
         if (initArgs.display_name) $displayNameInput.val(initArgs.display_name);
         if (initArgs.api_url) $apiUrlInput.val(initArgs.api_url);
-        if (initArgs.api_token) $apiUrlInput.val(initArgs.api_token);
+        if (initArgs.api_token) $apiToken.val(initArgs.api_token);
         if (initArgs.expected_key) $expectedKeyInput.val(initArgs.expected_key);
         if (initArgs.expected_value) $expectedValueInput.val(initArgs.expected_value);
     }
