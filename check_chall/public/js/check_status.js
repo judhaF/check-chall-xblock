@@ -23,7 +23,6 @@ function ExternalChallengeXBlockInit(runtime, element, initArgs) {
     var $statusMessage = $('.status-message', $element);
 
     // Get handler URL
-    var handlerUrl = runtime.handlerUrl(element, 'verify_external_challenge');
     // Button click handler
     $checkBtn.on('click', function(e) {
         e.preventDefault();
@@ -31,6 +30,7 @@ function ExternalChallengeXBlockInit(runtime, element, initArgs) {
     });
     
     function verifyChallenge() {
+        var handlerUrl = runtime.handlerUrl(element, 'verify_external_challenge');
         console.log('Verifying challenge...');
         console.log(handlerUrl);
 
