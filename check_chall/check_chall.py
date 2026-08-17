@@ -97,8 +97,9 @@ class ExternalChallengeXBlock(
         """
         Primary view shown to students in LMS and previewed in Studio.
         """
+        usage_id = str(self.scope_ids.usage_id)
         html = f"""
-        <div class="challenge-container">
+        <div class="challenge-container" data-usage-id="{usage_id}" data-block-id="{usage_id}">
             <h3>{self.display_name}</h3>
             <p>Click below to verify if you completed the challenge on the external platform.</p>
             <button class="check-challenge-btn">Verify Challenge Status</button>
