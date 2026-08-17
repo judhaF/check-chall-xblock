@@ -187,15 +187,23 @@ class ExternalChallengeXBlock(
         if is_valid:
             self.is_completed = True
 
-            # Publish Grade & Completion to Open edX LMS
-            self.runtime.publish(self, "grade", {
-                "value": 1.0,
-                "max_value": 1.0
-            })
-            self.runtime.publish(self, "completion", {
-                "completion": 1.0
-            })
+            try:
+                score = Score(raw_earned=1.0, raw_possible=1.0)
+                self.set_score(score)
+            except Exception as e:
+                logger.warning(f"Failed to set_score: {e}")
 
+            # Publish completion event safely
+            try:
+                self.runtime.publish(self, "completion", {"completion": 1.0})
+            except Exception as e:
+                logger.warning(f"Failed to publish completion event: {e}")
+
+            try:
+                self.runtime.publish(self, "completion", {"completion": 1.0})
+            except Exception as e:
+                logger.warning(f"Failed to publish completion event: {e}")
+            
             return {"success": True, "message": "Challenge verified! Course progress updated."}
         else:
             return {
