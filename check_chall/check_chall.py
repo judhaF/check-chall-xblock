@@ -88,6 +88,7 @@ class ExternalChallengeXBlock(
     editable_fields = (
         'display_name',
         'api_url',
+        'api_token',
         'expected_key',
         'expected_value',
     )
