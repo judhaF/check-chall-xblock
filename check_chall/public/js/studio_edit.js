@@ -21,6 +21,7 @@ function ExternalChallengeStudioInit(runtime, element, initArgs) {
     // Cache form inputs
     var $displayNameInput = $('#edit_display_name', $element);
     var $apiUrlInput = $('#edit_api_url', $element);
+    var $apiToken = $('#edit_api_token', $element);
     var $expectedKeyInput = $('#edit_expected_key', $element);
     var $expectedValueInput = $('#edit_expected_value', $element);
     var $saveBtn = $('.save-button', $element);
@@ -30,6 +31,7 @@ function ExternalChallengeStudioInit(runtime, element, initArgs) {
     if (initArgs) {
         if (initArgs.display_name) $displayNameInput.val(initArgs.display_name);
         if (initArgs.api_url) $apiUrlInput.val(initArgs.api_url);
+        if (initArgs.api_token) $apiUrlInput.val(initArgs.api_token);
         if (initArgs.expected_key) $expectedKeyInput.val(initArgs.expected_key);
         if (initArgs.expected_value) $expectedValueInput.val(initArgs.expected_value);
     }
@@ -50,6 +52,7 @@ function ExternalChallengeStudioInit(runtime, element, initArgs) {
         var data = {
             display_name: $displayNameInput.val(),
             api_url: $apiUrlInput.val(),
+            api_token: $apiToken.val(),
             expected_key: $expectedKeyInput.val(),
             expected_value: $expectedValueInput.val(),
         };
