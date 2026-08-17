@@ -32,7 +32,7 @@ function ExternalChallengeXBlockInit(runtime, element, initArgs) {
     function verifyChallenge() {
         var handlerUrl = runtime.handlerUrl(element, 'verify_external_challenge');
         console.log('Verifying challenge...');
-        console.log(handlerUrl);
+        console.log("HandleUrl:",handlerUrl);
 
         // Show loading state
         $checkBtn.prop('disabled', true);

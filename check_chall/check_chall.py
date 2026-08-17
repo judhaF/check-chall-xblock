@@ -199,6 +199,7 @@ class ExternalChallengeXBlock(
             return {"success": True, "message": "Challenge verified! Course progress updated."}
         else:
             return {
+                "url":url,
                 "success": False,
                 "message": f"Challenge not completed yet on platform. Received '{self.expected_key}': '{actual_val}' (expected '{self.expected_value}')."
             }
