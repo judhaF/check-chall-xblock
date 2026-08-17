@@ -93,6 +93,30 @@ class ExternalChallengeXBlock(
         'expected_value',
     )
 
+    def max_score(self):
+        """
+        Defines maximum possible score for grading engines.
+        """
+        return 1.0
+
+    def get_score(self):
+        """
+        Returns the current earned score.
+        """
+        return Score(raw_earned=1.0 if self.is_completed else 0.0, raw_possible=1.0)
+
+    def calculate_score(self):
+        """
+        Required by ScorableXBlockMixin.
+        """
+        return self.get_score()
+
+    def has_submitted(self):
+        """
+        tells the gating engine if the student has attempted/completed this block.
+        """
+        return self.is_completed
+
     def student_view(self, context=None):
         """
         Primary view shown to students in LMS and previewed in Studio.

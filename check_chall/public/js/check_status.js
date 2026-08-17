@@ -60,11 +60,21 @@ function ExternalChallengeXBlockInit(runtime, element, initArgs) {
 
     function handleResponse(response) {
         console.log('Response:', response);
-
         if (response.success) {
-            showMessage(response.message, 'success');
+            $statusMessage.removeClass('error').addClass('success').html(response.message).show();
+            $checkBtn.prop('disabled', true).text('Completed');
+
+            // Force LMS/MFE to refresh navigation state and unlock the next section
+            setTimeout(function() {
+                if (window.parent && window.parent.postMessage) {
+                    // Signal MFE parent container to update progress
+                    window.parent.postMessage({ type: 'plugin.events', eventName: 'unit_completed' }, '*');
+                }
+                window.location.reload();
+            }, 1500);
         } else {
-            showMessage(response.message, 'error');
+            $statusMessage.removeClass('success').addClass('error').html(response.message).show();
+            $checkBtn.prop('disabled', false).text('Verify Challenge Status');
         }
     }
 
