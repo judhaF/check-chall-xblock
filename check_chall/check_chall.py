@@ -201,7 +201,7 @@ class ExternalChallengeXBlock(
             return {
                 "url":url,
                 "success": False,
-                "message": f"Challenge not completed yet on platform. Received '{self.expected_key}': '{actual_val}' (expected '{self.expected_value} url:{url} response:{response_data} header:{header}')."
+                "message": f"Challenge not completed yet on platform. Received '{self.expected_key}': '{actual_val}' (expected '{self.expected_value} url:{url} response:{response_data} header:{header} request:{response.request}')."
             }
         
     def has_submitted(self):
