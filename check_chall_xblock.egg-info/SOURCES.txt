@@ -2,9 +2,9 @@ README.md
 setup.py
 check_chall/__init__.py
 check_chall/check_chall.py
-check_chall/static/css/style.css
-check_chall/static/js/check_status.js
-check_chall/static/js/studio_edit.js
+check_chall/public/css/style.css
+check_chall/public/js/check_status.js
+check_chall/public/js/studio_edit.js
 check_chall_xblock.egg-info/PKG-INFO
 check_chall_xblock.egg-info/SOURCES.txt
 check_chall_xblock.egg-info/dependency_links.txt

@@ -55,7 +55,13 @@ class ExternalChallengeXBlock(
         display_name="API Endpoint URL",
         default="https://api.thirdparty.com/check-status",
         scope=Scope.settings,
-        help="The full API URL to hit. ?email=student@example.com will be appended automatically."
+        help="The full API URL to hit. {username} will be changed to session username."
+    )
+
+    api_token = String(
+        display_name="API Endpoint Bearer Token",
+        scope=Scope.settings,
+        help="The full API bearer token"
     )
 
     expected_key = String(
@@ -156,9 +162,12 @@ class ExternalChallengeXBlock(
         else:
             sep = "&" if "?" in self.api_url else "?"
             url = f"{self.api_url}{sep}username={username}"
-
+        header = {
+            "Authorization": f"Bearer {self.api_token}",
+            "Accept": "application/json"
+        }
         try:
-            response = requests.get(url, timeout=7)
+            response = requests.get(url, headers=header, timeout=7)
             response_data = response.json()
         except Exception as e:
             return {"success": False, "message": f"Failed to connect to verification server ({self.api_url}): {str(e)}"}
