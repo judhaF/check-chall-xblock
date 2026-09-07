@@ -42,6 +42,7 @@ class ExternalChallengeXBlock(
     External Challenge XBlock - Verify student completion via external API
     """
     has_score = True
+    icon_class = "problem"
     has_custom_completion = True
     display_name = String(
         display_name="Display Name",
@@ -120,8 +121,6 @@ class ExternalChallengeXBlock(
         """
         Returns user's current (saved) score for the problem as raw values.
         """
-        if self._get_raw_earned_if_set() is None:
-            self.raw_earned = self._learner_raw_score()
         return Score(self.raw_earned, self.raw_possible)
 
     def set_score(self, score):
@@ -133,13 +132,6 @@ class ExternalChallengeXBlock(
         """
         self.raw_earned = score.raw_earned
         self.raw_possible = score.raw_possible
-
-    def calculate_score(self):
-        """
-        Returns a newly-calculated raw score on the problem for the learner
-        based on the learner's current state.
-        """
-        return Score(self.raw_earned(), self.max_score())
 
     def has_submitted_answer(self):
         """
@@ -247,12 +239,16 @@ class ExternalChallengeXBlock(
             except Exception as e:
                 logger.warning(f"Failed to set_score: {e}")
 
-            # Publish completion event safely
+            # Publish grade event — this is what actually sets the grade in the LMS
             try:
-                self.runtime.publish(self, "completion", {"completion": 1.0})
+                self.runtime.publish(self, "grade", {
+                    "value": 1.0,
+                    "max_value": 1.0,
+                })
             except Exception as e:
-                logger.warning(f"Failed to publish completion event: {e}")
+                logger.warning(f"Failed to publish grade event: {e}")
 
+            # Publish completion event
             try:
                 self.runtime.publish(self, "completion", {"completion": 1.0})
             except Exception as e:
