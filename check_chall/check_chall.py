@@ -144,14 +144,23 @@ class ExternalChallengeXBlock(
         Primary view shown to students in LMS and previewed in Studio.
         """
         usage_id = str(self.scope_ids.usage_id)
-        html = f"""
-        <div class="challenge-container" data-usage-id="{usage_id}" data-block-id="{usage_id}">
-            <h3>{self.display_name}</h3>
-            <p>Click below to verify if you completed the challenge on the external platform.</p>
-            <button class="check-challenge-btn">Verify Challenge Status</button>
-            <div class="status-message"></div>
-        </div>
-        """
+        if not self.is_completed:
+            html = f"""
+            <div class="challenge-container" data-usage-id="{usage_id}" data-block-id="{usage_id}">
+                <h3>{self.display_name}</h3>
+                <p>Click below to verify if you completed the challenge on the external platform.</p>
+                <button class="check-challenge-btn">Verify Challenge Status</button>
+                <div class="status-message"></div>
+            </div>
+            """
+        else:
+            html = f"""
+            <div class="challenge-container" data-usage-id="{usage_id}" data-block-id="{usage_id}">
+                <h3>{self.display_name}</h3>
+                <p class="completed-text">Completed !</p>
+            </div>
+            """
+            
         fragment = Fragment(html)
         css_url = 'public/css/style.css'
         js_url = 'public/js/check_status.js'
