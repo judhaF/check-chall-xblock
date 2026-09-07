@@ -13,7 +13,7 @@ import webob
 import html
 from xblock.core import XBlock
 from xblock.exceptions import JsonHandlerError
-from xblock.fields import Boolean, Dict, Float, Integer, Scope, String
+from xblock.fields import Boolean, Dict, Float, Integer, Scope, String, ScoreField
 from xblock.scorable import ScorableXBlockMixin, Score
 try:
     from xblock.utils.resources import ResourceLoader
@@ -36,14 +36,13 @@ class ExternalChallengeXBlock(
     XBlock,
     StudioEditableXBlockMixin,
     XBlockWithSettingsMixin,
-    ThemableXBlockMixin
+    ThemableXBlockMixin,
 ):
     """
     External Challenge XBlock - Verify student completion via external API
     """
     has_score = True
     has_custom_completion = True
-
     display_name = String(
         display_name="Display Name",
         default="External Challenge Verification",
@@ -83,7 +82,17 @@ class ExternalChallengeXBlock(
         scope=Scope.user_state,
         help="Tracks if student completed the external challenge"
     )
+    raw_earned = Float(
+        scope=Scope.user_state,
+        default=0,
+        enforce_type=True,
+    )
 
+    raw_possible = Float(
+        scope=Scope.user_state,
+        default=1,
+        enforce_type=True,
+    )
     # Auto-generate studio edit form with these fields
     editable_fields = (
         'display_name',
@@ -93,25 +102,46 @@ class ExternalChallengeXBlock(
         'expected_value',
     )
 
+    @property
+    def score(self):
+        """
+        Returns learners saved score.
+        """
+        return Score(self.raw_earned, self.raw_possible)
+
     def max_score(self):
         """
-        Defines maximum possible score for grading engines.
+        Return the problem's max score, which for DnDv2 always equals 1.
+        Required by the grading system in the LMS.
         """
-        return 1.0
+        return 1
 
     def get_score(self):
         """
-        Returns the current earned score.
+        Returns user's current (saved) score for the problem as raw values.
         """
-        return Score(raw_earned=1.0 if self.is_completed else 0.0, raw_possible=1.0)
+        if self._get_raw_earned_if_set() is None:
+            self.raw_earned = self._learner_raw_score()
+        return Score(self.raw_earned, self.raw_possible)
+
+    def set_score(self, score):
+        """
+        Sets the score on this block.
+        Takes a Score namedtuple containing a raw
+        score and possible max (for this block, we expect that this will
+        always be 1).
+        """
+        self.raw_earned = score.raw_earned
+        self.raw_possible = score.raw_possible
 
     def calculate_score(self):
         """
-        Required by ScorableXBlockMixin.
+        Returns a newly-calculated raw score on the problem for the learner
+        based on the learner's current state.
         """
-        return self.get_score()
+        return Score(self.raw_earned(), self.max_score())
 
-    def has_submitted(self):
+    def has_submitted_answer(self):
         """
         tells the gating engine if the student has attempted/completed this block.
         """
@@ -248,6 +278,35 @@ class ExternalChallengeXBlock(
         """
         score = 1.0 if self.is_completed else 0.0
         return Score(raw_earned=score, raw_possible=1.0)
+
+    def get_progress(self):
+        """
+        For now, just return weighted earned / weighted possible
+        """
+        if self.score:
+            raw_earned = self.score.raw_earned
+            raw_possible = self.score.raw_possible
+        else:
+            raw_earned = raw_possible = 0
+
+        if raw_possible > 0:
+            if self.weight is not None:
+                # Progress objects expect total > 0
+                if self.weight == 0:
+                    return None
+
+                # scale score and total by weight/total:
+                weighted_earned = raw_earned * self.weight / raw_possible
+                weighted_possible = self.weight
+            else:
+                weighted_earned = raw_earned
+                weighted_possible = raw_possible
+            try:
+                return Progress(weighted_earned, weighted_possible)
+            except (TypeError, ValueError):
+                logger.exception("Got bad progress")
+                return None
+        return None
     
     @staticmethod
     def workbench_scenarios():
