@@ -157,7 +157,7 @@ class ExternalChallengeXBlock(
             html = f"""
             <div class="challenge-container" data-usage-id="{usage_id}" data-block-id="{usage_id}">
                 <h3>{self.display_name}</h3>
-                <p class="completed-text">Completed !</p>
+                <p class="completed-text">Completed !✅</p>
             </div>
             """
             
